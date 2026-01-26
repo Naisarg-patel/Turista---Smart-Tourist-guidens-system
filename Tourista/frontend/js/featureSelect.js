@@ -1,5 +1,5 @@
 // ================= ADMIN DASHBOARD (CP EXACT) =================
-const templetes = {
+const templates = {
     discoverControls: `
                 <div class="mt-8">
                     <h3 class="text-xl font-semibold text-gray-800">Discover</h3>
@@ -189,15 +189,15 @@ const templetes = {
 };
 
 const featureControl = {
-  admin : templetes.adminControls,
-  discover : templetes.discoverControls,
-  route : templetes.routeControls,
-  ai : templetes.aiControls,
-  events : templetes.eventsControls,
-  info : templetes.infoControls,
-  safety : templetes.safetyControls,
-  map : templetes.mapControls,
-  profile : templetes.profileControls
+  admin : templates.adminControls,
+  discover : templates.discoverControls,
+  route : templates.routeControls,
+  ai : templates.aiControls,
+  events : templates.eventsControls,
+  info : templates .infoControls,
+  safety : templates.safetyControls,
+  map : templates.mapControls,
+  profile : templates.profileControls
 };
 
 const title = {
@@ -242,6 +242,97 @@ document.querySelectorAll(".initial-feature-btn").forEach(btn => {
   };
 });
 
+const mockAttractions = [
+            { id: 1, name: 'Sabarmati Ashram', type: 'Garden', rating: 4.8, status: 'Open', img: 'https://placehold.co/600x400/a5b4fc/1e1b4b?text=Ashram&font=inter', details: "Historic site dedicated to Mahatma Gandhi." },
+            { id: 2, name: 'Kankaria Lake', type: 'Garden', rating: 4.7, status: 'Open', img: 'https://placehold.co/600x400/a5b4fc/1e1b4b?text=Lake&font=inter', details: "Large, circular lake with entertainment options." },
+            { id: 3, name: 'AlphaOne Mall', type: 'Mall', rating: 4.5, status: 'Open', img: 'https://placehold.co/600x400/a5b4fc/1e1b4b?text=Mall&font=inter', details: "Premier shopping and dining destination." },
+            { id: 4, name: 'Manek Chowk', type: 'Restaurant', rating: 4.6, status: 'Open', img: 'https://placehold.co/600x400/a5b4fc/1e1b4b?text=Food&font=inter', details: "Famous night market for street food." },
+            { id: 5, name: 'Adalaj Stepwell', type: 'Garden', rating: 4.9, status: 'Closed', img: 'https://placehold.co/600x400/a5b4fc/1e1b4b?text=Stepwell&font=inter', details: "Intricate historical stepwell architecture." },
+            { id: 6, name: 'Gordhan Thal', type: 'Restaurant', type: 'Restaurant', rating: 4.7, status: 'Open', img: 'https://placehold.co/600x400/a5b4fc/1e1b4b?text=Thali&font=inter', details: "Authentic Gujarati Thali experience." },
+            { id: 7, name: 'Palladium Mall', type: 'Mall', rating: 4.8, status: 'Open', img: 'https://placehold.co/600x400/a5b4fc/1e1b4b?text=New+Mall&font=inter', details: "Upscale shopping mall." },
+        ];
+
+         const mockEventsData = [
+            { name: 'Heritage Walk & Photo Exhibition', category: 'Workshop', time: '9:00 AM', location: 'Old City Gates', date: '2025-11-12', color: 'bg-yellow-600' },
+            { name: 'Regional Folk Music Festival', category: 'Music', time: '6:30 PM', location: 'Riverfront Park', date: '2025-11-12', color: 'bg-green-600' },
+            { name: 'Kankaria Food Carnival', category: 'Festival', time: '12:00 PM', location: 'Kankaria Lake', date: '2025-11-13', color: 'bg-red-600' },
+            { name: 'Modern Art Seminar', category: 'Workshop', time: '2:00 PM', location: 'City Convention Hall', date: '2025-11-14', color: 'bg-indigo-600' },
+        ];
+const attractionsListView = document.getElementById('attractions-list-view');
+
+
+// --- ATTRACTION / DISCOVER LOGIC (Unchanged) ---
+
+ function renderMockEvents() {
+            const listContainer = document.getElementById('events-list');
+            listContainer.innerHTML = '';
+            
+            mockEventsData.forEach(event => {
+                const eventCard = `
+                    <div class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center transition-all hover:shadow-lg border-l-4 ${event.color.replace('bg-', 'border-')}">
+                        <div class="flex flex-col">
+                            <h4 class="text-lg font-semibold text-gray-900">${event.name}</h4>
+                            <p class="text-sm text-gray-600">${event.location} - ${event.time}</p>
+                            <span class="text-xs font-medium text-gray-500 mt-1">${event.category} (${event.date})</span>
+                        </div>
+                        <button class="event-details-btn flex items-center gap-1.5 py-2 px-3 text-white rounded-full text-sm font-semibold ${event.color} hover:opacity-90"
+                                data-event-name="${event.name}" data-event-location="${event.location}">
+                            ✨ Details & Translate
+                        </button>
+                    </div>
+                `;
+                listContainer.innerHTML += eventCard;
+            });
+        }   
+
+        function renderAttractions(filter = 'all') {
+            let filteredList = [];
+
+            if (filter === 'all') {
+                filteredList = mockAttractions;
+            } else if (['Restaurant', 'Mall', 'Garden'].includes(filter)) {
+                filteredList = mockAttractions.filter(att => att.type === filter);
+            } else {
+                // Search functionality
+                filteredList = mockAttractions.filter(att => 
+                    att.name.toLowerCase().includes(filter.toLowerCase()) ||
+                    att.type.toLowerCase().includes(filter.toLowerCase())
+                );
+            }
+            contentTitle.textContent = filteredList.length === mockAttractions.length ? "Featured Attractions" : `${filteredList.length} Results for "${filter}"`;
+
+            attractionsListView.innerHTML = '';
+
+            if (filteredList.length === 0) {
+                attractionsListView.innerHTML = `<p class="text-gray-500 text-center p-4">No attractions found.</p>`;
+                return;
+            }
+
+            filteredList.forEach(att => {
+                const statusClass = att.status === 'Open' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                const card = `
+                    <div class="bg-white p-4 rounded-lg shadow-md flex gap-4 overflow-hidden transition-all hover:shadow-lg">
+                        <img src="https://placehold.co/600x400/a5b4fc/1e1b4b?text=${att.name.replace(/\s/g, '+')}&font=inter" alt="${att.name}" class="w-24 h-24 md:w-32 md:h-32 object-cover rounded-md flex-shrink-0">
+                        <div class="flex-1 flex flex-col">
+                            <h4 class="text-lg font-semibold text-gray-900">${att.name}</h4>
+                            <p class="text-sm text-gray-600">${att.type}</p>
+                            <p class="text-xs text-gray-500 mt-1 line-clamp-2">${att.details}</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <svg class="w-5 h-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z" clip-rule="evenodd" /></svg>
+                                <span class="font-bold text-gray-800">${att.rating}</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full ${statusClass}">${att.status}</span>
+                            </div>
+                            <!-- New Button for AI Tips -->
+                            <button class="get-tips-btn group mt-3 ml-auto flex items-center justify-center gap-2 bg-purple-100 text-purple-700 font-semibold py-2 px-4 rounded-lg hover:bg-purple-200 transition duration-300 text-sm" data-name="${att.name}" data-type="${att.type}">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.25 12L17 14.188l-1.25-2.188L13.5 11l2.25-1.188L17 7.625l1.25 2.188L20.5 11l-2.25 1.188z" /></svg>
+                                <span>✨ Get Insider Tips</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                attractionsListView.innerHTML += card;
+            });
+        }
 
 
 // BACK BUTTON
@@ -274,3 +365,56 @@ document
                 } 
             } 
 
+
+        loginBtn.addEventListener('click', () => { showScreen('feature-select'); });
+
+        // Screen 2 (Feature Select) -> Screen 3 (City Select) OR Screen 5 (Dashboard)
+        featureSelectBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const page = btn.dataset.page;
+                const feature = btn.dataset.feature; 
+
+                // Features that require S3: discover, offline
+                // Features that skip S3: route, ai, info, profile, safety, admin, events, map
+                const needsCitySelectionScreen = (
+                    feature === 'discover' || 
+                    feature === 'offline'
+                );
+
+                if (needsCitySelectionScreen) {
+                    // Set the next feature to load after city selection
+                    currentFeature = feature; 
+                    showScreen('city');
+                } else {
+                    // Go direct to Dashboard feature (handles city/destination input internally)
+                    loadDashboardFeature(feature);
+                }
+            });
+        });
+        
+        // Screen 3 (City Select) -> Screen 4 (Main Menu) - City Buttons
+        cityBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Feature is pre-set from Screen 2
+                handleCitySelection(btn.dataset.city, currentFeature === 'discover' ? null : currentFeature);
+            });
+        });
+        
+        // Screen 3 (City Select) -> Screen 4 (Main Menu) - Search Bar
+        searchCityBtn.addEventListener('click', () => {
+            const customCity = customCityInput.value.trim();
+            if (customCity) {
+                handleCitySelection(customCity, currentFeature === 'discover' ? null : currentFeature);
+            } else {
+                showModal("City Required", "Please enter a city name to begin exploring.");
+            }
+        });
+
+
+        // Screen 4 (Main Menu) -> Screen 5 (Dashboard Feature Load) 
+        menuFeatureBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const feature = btn.dataset.feature;
+                loadDashboardFeature(feature);
+            });
+        });
