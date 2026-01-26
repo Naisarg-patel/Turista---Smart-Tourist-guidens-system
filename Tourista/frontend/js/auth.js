@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+  // Initialize first screen
+  showScreen("login");
+
   // Switch screens
   const goToRegister = document.getElementById("go-to-register");
   const goToLogin = document.getElementById("go-to-login");

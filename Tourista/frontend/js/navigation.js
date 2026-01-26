@@ -10,6 +10,7 @@ const screens = {
 
 let currentScreen = null;
 let previousScreen = null;
+let currentCity = null;
 
 // Show only one screen
 function showScreen(screenName) {
